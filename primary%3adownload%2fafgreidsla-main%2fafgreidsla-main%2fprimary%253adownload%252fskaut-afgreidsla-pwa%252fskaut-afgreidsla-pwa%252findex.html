@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="is">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Skaut afgreiðsla - farsímavænt vefapp fyrir skaut, búnt og gafla" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Skaut afgreiðsla</title>
+  <style>
+    :root {
+      --bg: #eaf0f6;
+      --card: #ffffff;
+      --navy: #0f172a;
+      --navy-2: #1e293b;
+      --muted: #64748b;
+      --sky-bg: #eff6ff;
+      --sky-border: #bfdbfe;
+      --sky-strong: #0c4a6e;
+      --sky-soft: #e0f2fe;
+      --amber-soft: #fef3c7;
+      --amber-border: #f59e0b;
+      --amber-strong: #92400e;
+      --ok: #15803d;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--navy); }
+    body { min-height: 100vh; }
+    .app { max-width: 860px; margin: 0 auto; padding: 16px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 14px; }
+    .header { background: var(--navy); color: white; }
+    .eyebrow { color: #b6c2d2; font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+    h1 { margin: 8px 0 4px; font-size: clamp(30px, 5vw, 40px); line-height: 1; }
+    .subtitle { color: #d7e1ec; font-size: 14px; margin-bottom: 14px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .grow { flex: 1 1 260px; }
+    label { display: block; margin-bottom: 6px; font-size: 15px; font-weight: 800; color: #334155; }
+    input {
+      width: 100%; height: 64px; border-radius: 18px; border: 2px solid var(--sky-border); background: var(--sky-bg);
+      padding: 0 16px; font-size: 28px; font-weight: 900; color: var(--navy); outline: none;
+    }
+    input:focus { border-color: #38bdf8; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 16px;
+      padding: 14px 18px; background: var(--navy-2); color: white; font-size: 15px; font-weight: 800; cursor: pointer;
+    }
+    .section-title { font-size: clamp(24px, 4vw, 30px); font-weight: 900; margin: 0 0 14px; }
+    .big-answer {
+      border-radius: 22px; padding: 18px; text-align: center; margin-top: 8px; border: 2px solid transparent;
+    }
+    .big-answer .label { font-size: 13px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+    .big-answer .value { font-size: clamp(56px, 10vw, 82px); font-weight: 900; line-height: 1; margin-top: 4px; }
+    .big-answer .text { font-size: clamp(22px, 4vw, 32px); font-weight: 800; margin-top: 4px; }
+    .warning { background: var(--amber-soft); border-color: var(--amber-border); }
+    .warning .label, .warning .value, .warning .text { color: var(--amber-strong); }
+    .info { background: var(--sky-soft); border-color: #38bdf8; }
+    .info .label { color: #155e75; }
+    .info .action { font-size: clamp(28px, 5vw, 48px); font-weight: 900; line-height: 1.15; color: var(--sky-strong); margin-top: 8px; }
+    .info .sub { margin-top: 8px; font-size: 20px; font-weight: 700; color: #155e75; }
+    .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+    .tile { background: #f8fafc; border: 1.5px solid #d7e3f0; border-radius: 20px; padding: 14px; }
+    .tile .title { font-size: 13px; font-weight: 800; color: #475569; }
+    .tile .val { font-size: clamp(28px, 5vw, 40px); font-weight: 900; margin-top: 6px; }
+    .tile .sub { font-size: 12px; color: var(--muted); }
+    .footer-box { margin-top: 10px; border-radius: 18px; background: #f1f5f9; padding: 14px; text-align: center; font-size: 18px; font-weight: 800; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 12px; background: #e2e8f0; color: var(--navy); font-size: 12px; font-weight: 800; }
+    .top-actions { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .install-wrap { display: none; margin-top: 10px; }
+    .divider { height: 1px; background: #e2e8f0; margin: 18px 0 0; }
+    .helper { margin-top: 12px; font-size: 13px; color: var(--muted); text-align: center; }
+    @media (max-width: 640px) {
+      .app { padding: 12px; }
+      .card { padding: 16px; border-radius: 22px; }
+      .tiles { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 430px) {
+      .tiles { grid-template-columns: 1fr; }
+      input { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card header">
+      <div class="top-actions">
+        <div>
+          <div class="eyebrow">Skautsmiðja</div>
+          <h1>Skaut afgreiðsla</h1>
+          <div class="subtitle">Farsímavænt vefapp fyrir skaut, búnt og gafla.</div>
+          <div class="chip">Virkar offline eftir að þú hefur opnað það einu sinni</div>
+        </div>
+        <div>
+          <button class="btn" id="clearAllBtn">Hreinsa</button>
+          <div class="install-wrap" id="installWrap">
+            <button class="btn" id="installBtn">Setja á heimaskjá</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">1. Hvað vantar mörg skaut?</h2>
+      <div class="row">
+        <div class="grow">
+          <label for="toSend">Á að senda</label>
+          <input id="toSend" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="t.d. 92" />
+        </div>
+        <div class="grow">
+          <label for="onBelt">Skaut á bandi</label>
+          <input id="onBelt" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="t.d. 28" />
+        </div>
+      </div>
+      <div class="big-answer warning">
+        <div class="label">Niðurstaða</div>
+        <div class="value" id="missingSkaut">0</div>
+        <div class="text">Vantar skaut</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">2. Stemma gafla og skaut</h2>
+      <div class="row">
+        <div class="grow">
+          <label for="gaflar">Gaflar á línu</label>
+          <input id="gaflar" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="t.d. 58" />
+        </div>
+        <div class="grow">
+          <label for="skaut">Skaut á línu</label>
+          <input id="skaut" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="t.d. 35" />
+        </div>
+      </div>
+      <div class="big-answer info">
+        <div class="label">Aðgerð</div>
+        <div class="action" id="actionText">Bæta við 0 búntum og 0 göflum</div>
+        <div class="sub"><span id="skautToAdd">0</span> skaut bætast við</div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="title">Mismunur</div><div class="val" id="difference">0</div><div class="sub">gaflar - skaut</div></div>
+        <div class="tile"><div class="title">Búnt sem þarf</div><div class="val" id="buntsNeeded">0</div><div class="sub">4 skaut í búnti</div></div>
+        <div class="tile"><div class="title">Skaut sem bætast við</div><div class="val" id="skautAdd">0</div></div>
+        <div class="tile"><div class="title">Gafla sem vantar</div><div class="val" id="gaflarAdd">0</div></div>
+      </div>
+      <div class="footer-box" id="finalState">Lokastaða: 0 skaut / 0 gaflar</div>
+      <div class="helper">Sláðu bara inn tölur. Appið reiknar afganginn sjálft.</div>
+    </section>
+  </main>
+
+  <script>
+    const ids = {
+      toSend: document.getElementById('toSend'),
+      onBelt: document.getElementById('onBelt'),
+      gaflar: document.getElementById('gaflar'),
+      skaut: document.getElementById('skaut'),
+      clearAllBtn: document.getElementById('clearAllBtn'),
+      missingSkaut: document.getElementById('missingSkaut'),
+      actionText: document.getElementById('actionText'),
+      skautToAdd: document.getElementById('skautToAdd'),
+      difference: document.getElementById('difference'),
+      buntsNeeded: document.getElementById('buntsNeeded'),
+      skautAdd: document.getElementById('skautAdd'),
+      gaflarAdd: document.getElementById('gaflarAdd'),
+      finalState: document.getElementById('finalState'),
+      installWrap: document.getElementById('installWrap'),
+      installBtn: document.getElementById('installBtn'),
+    };
+
+    const digitsOnly = (v) => String(v || '').replace(/[^0-9]/g, '');
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    function sanitizeInput(el) {
+      el.value = digitsOnly(el.value);
+    }
+
+    function calc() {
+      const toSend = num(ids.toSend.value);
+      const onBelt = num(ids.onBelt.value);
+      const gaflar = num(ids.gaflar.value);
+      const skaut = num(ids.skaut.value);
+
+      const missingSkaut = Math.max(0, toSend - onBelt);
+
+      const difference = gaflar - skaut;
+      const buntsNeeded = Math.max(0, Math.ceil(difference / 4));
+      const skautToAdd = buntsNeeded * 4;
+      const gaflarToAdd = Math.max(0, skaut + skautToAdd - gaflar);
+      const finalSkaut = skaut + skautToAdd;
+      const finalGaflar = gaflar + gaflarToAdd;
+
+      ids.missingSkaut.textContent = missingSkaut;
+      ids.actionText.textContent = `Bæta við ${buntsNeeded} búntum og ${gaflarToAdd} göflum`;
+      ids.skautToAdd.textContent = skautToAdd;
+      ids.difference.textContent = difference;
+      ids.buntsNeeded.textContent = buntsNeeded;
+      ids.skautAdd.textContent = skautToAdd;
+      ids.gaflarAdd.textContent = gaflarToAdd;
+      ids.finalState.textContent = `Lokastaða: ${finalSkaut} skaut / ${finalGaflar} gaflar`;
+
+      const state = {
+        toSend: ids.toSend.value,
+        onBelt: ids.onBelt.value,
+        gaflar: ids.gaflar.value,
+        skaut: ids.skaut.value,
+      };
+      localStorage.setItem('skaut-afgreidsla-state', JSON.stringify(state));
+    }
+
+    ['toSend', 'onBelt', 'gaflar', 'skaut'].forEach((key) => {
+      ids[key].addEventListener('input', (e) => {
+        sanitizeInput(e.target);
+        calc();
+      });
+    });
+
+    ids.clearAllBtn.addEventListener('click', () => {
+      ids.toSend.value = '';
+      ids.onBelt.value = '';
+      ids.gaflar.value = '';
+      ids.skaut.value = '';
+      calc();
+    });
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('skaut-afgreidsla-state') || '{}');
+      if (saved && typeof saved === 'object') {
+        ids.toSend.value = digitsOnly(saved.toSend || '');
+        ids.onBelt.value = digitsOnly(saved.onBelt || '');
+        ids.gaflar.value = digitsOnly(saved.gaflar || '');
+        ids.skaut.value = digitsOnly(saved.skaut || '');
+      }
+    } catch (e) {}
+
+    calc();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      ids.installWrap.style.display = 'block';
+    });
+
+    ids.installBtn?.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      ids.installWrap.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
